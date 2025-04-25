@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | نظام إدارة الموارد البشرية{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0"><i class="fas fa-file-alt"></i> إنشاء مستند جديد</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="needs-validation" novalidate>
+            {{ form.hidden_tag() }}
+            
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-info-circle"></i> بيانات المستند الأساسية</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.document_type.label(class="form-label") }}
+                        {% if form.document_type.errors %}
+                            {{ form.document_type(class="form-select is-invalid", id="document_type") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.document_type.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.document_type(class="form-select", id="document_type") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.employee_id.label(class="form-label") }}
+                        {% if form.employee_id.errors %}
+                            {{ form.employee_id(class="form-select is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.employee_id.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.employee_id(class="form-select") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {% if form.title.errors %}
+                            {{ form.title(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.title(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dynamic fields based on document type -->
+            <div class="row mb-4" id="leave_fields" style="display:none;">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-calendar-minus"></i> بيانات الإجازة</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.leave_type.label(class="form-label") }}
+                        {% if form.leave_type.errors %}
+                            {{ form.leave_type(class="form-select is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.leave_type.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.leave_type(class="form-select") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.start_date.label(class="form-label") }}
+                        {% if form.start_date.errors %}
+                            {{ form.start_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.start_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.start_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.end_date.label(class="form-label") }}
+                        {% if form.end_date.errors %}
+                            {{ form.end_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.end_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.end_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        {{ form.reason.label(class="form-label") }}
+                        {% if form.reason.errors %}
+                            {{ form.reason(class="form-control is-invalid", rows=3) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.reason.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.reason(class="form-control", rows=3) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4" id="mission_fields" style="display:none;">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-plane"></i> بيانات المهمة</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.mission_title.label(class="form-label") }}
+                        {% if form.mission_title.errors %}
+                            {{ form.mission_title(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.mission_title.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.mission_title(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.mission_location.label(class="form-label") }}
+                        {% if form.mission_location.errors %}
+                            {{ form.mission_location(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.mission_location.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.mission_location(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.start_date.label(class="form-label") }}
+                        {% if form.start_date.errors %}
+                            {{ form.start_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.start_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.start_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        {{ form.end_date.label(class="form-label") }}
+                        {% if form.end_date.errors %}
+                            {{ form.end_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.end_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.end_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.reason.label(class="form-label") }}
+                        <label class="form-label">الوصف</label>
+                        {% if form.reason.errors %}
+                            {{ form.reason(class="form-control is-invalid", rows=3) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.reason.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.reason(class="form-control", rows=3) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4" id="promotion_fields" style="display:none;">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-level-up-alt"></i> بيانات الترقية</h5>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        {{ form.old_value.label(class="form-label") }}
+                        {% if form.old_value.errors %}
+                            {{ form.old_value(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.old_value.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.old_value(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        {{ form.new_value.label(class="form-label") }}
+                        {% if form.new_value.errors %}
+                            {{ form.new_value(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.new_value.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.new_value(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        {{ form.effective_date.label(class="form-label") }}
+                        {% if form.effective_date.errors %}
+                            {{ form.effective_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.effective_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.effective_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4" id="experience_fields" style="display:none;">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-briefcase"></i> بيانات الخبرة المهنية</h5>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        {{ form.years_of_service.label(class="form-label") }}
+                        {% if form.years_of_service.errors %}
+                            {{ form.years_of_service(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.years_of_service.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.years_of_service(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        {{ form.positions_held.label(class="form-label") }}
+                        {% if form.positions_held.errors %}
+                            {{ form.positions_held(class="form-control is-invalid", rows=3) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.positions_held.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.positions_held(class="form-control", rows=3) }}
+                        {% endif %}
+                        <div class="form-text">اكتب كل منصب في سطر منفصل</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        {{ form.accomplishments.label(class="form-label") }}
+                        {% if form.accomplishments.errors %}
+                            {{ form.accomplishments(class="form-control is-invalid", rows=3) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.accomplishments.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.accomplishments(class="form-control", rows=3) }}
+                        {% endif %}
+                        <div class="form-text">اكتب كل إنجاز في سطر منفصل</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4" id="attendance_fields" style="display:none;">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-user-clock"></i> فترة تقرير الحضور</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.start_date.label(class="form-label") }}
+                        {% if form.start_date.errors %}
+                            {{ form.start_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.start_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.start_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.end_date.label(class="form-label") }}
+                        {% if form.end_date.errors %}
+                            {{ form.end_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.end_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.end_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4" id="declaration_fields" style="display:none;">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-clipboard-check"></i> بيانات مباشرة/عدم مباشرة العمل</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.effective_date.label(class="form-label") }}
+                        {% if form.effective_date.errors %}
+                            {{ form.effective_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.effective_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.effective_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.reason.label(class="form-label") }}
+                        {% if form.reason.errors %}
+                            {{ form.reason(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.reason.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.reason(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4" id="return_fields" style="display:none;">
+                <div class="col-md-12">
+                    <h5 class="border-bottom pb-2"><i class="fas fa-undo"></i> بيانات استئناف العمل</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.previous_leave_id.label(class="form-label") }}
+                        {% if form.previous_leave_id.errors %}
+                            {{ form.previous_leave_id(class="form-select is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.previous_leave_id.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.previous_leave_id(class="form-select") }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {{ form.effective_date.label(class="form-label") }}
+                        {% if form.effective_date.errors %}
+                            {{ form.effective_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.effective_date.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.effective_date(class="form-control", type="date") }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        {{ form.notes.label(class="form-label") }}
+                        {% if form.notes.errors %}
+                            {{ form.notes(class="form-control is-invalid", rows=3) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.notes.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.notes(class="form-control", rows=3) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{{ url_for('documents.document_list') }}" class="btn btn-secondary me-md-2">
+                    <i class="fas fa-times"></i> إلغاء
+                </a>
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function() {
+        // Show/hide fields based on document type
+        $('#document_type').change(function() {
+            // Hide all dynamic fields
+            $('#leave_fields, #mission_fields, #promotion_fields, #experience_fields, #attendance_fields, #declaration_fields, #return_fields').hide();
+            
+            var docType = $(this).val();
+            
+            // Show relevant fields based on document type
+            if (docType === 'leave_permission' || docType === 'sick_leave' || docType === 'maternity_leave') {
+                $('#leave_fields').show();
+            } else if (docType === 'mission_order') {
+                $('#mission_fields').show();
+            } else if (docType === 'grade_promotion' || docType === 'rank_promotion') {
+                $('#promotion_fields').show();
+            } else if (docType === 'experience_certificate') {
+                $('#experience_fields').show();
+            } else if (docType === 'attendance_report') {
+                $('#attendance_fields').show();
+            } else if (docType === 'work_start_declaration' || docType === 'work_end_declaration') {
+                $('#declaration_fields').show();
+            } else if (docType === 'return_to_work') {
+                $('#return_fields').show();
+            }
+        });
+        
+        // Trigger on page load
+        $('#document_type').trigger('change');
+        
+        // Form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    });
+</script>
+{% endblock %}
