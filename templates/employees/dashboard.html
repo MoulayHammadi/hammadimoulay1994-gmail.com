@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | نظام إدارة الموارد البشرية{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tachometer-alt"></i> لوحة التحكم</h2>
+    <div>
+        <a href="{{ url_for('employees.add_employee') }}" class="btn btn-success">
+            <i class="fas fa-user-plus"></i> إضافة موظف جديد
+        </a>
+        <a href="{{ url_for('documents.generate_document') }}" class="btn btn-primary">
+            <i class="fas fa-file-alt"></i> إنشاء مستند جديد
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3 shadow">
+            <div class="card-body text-center">
+                <h1><i class="fas fa-users"></i> {{ total_employees }}</h1>
+                <h5 class="card-title">إجمالي الموظفين</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3 shadow">
+            <div class="card-body text-center">
+                <h1><i class="fas fa-file-alt"></i> {{ recent_documents|length }}</h1>
+                <h5 class="card-title">الوثائق الحديثة</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3 shadow">
+            <div class="card-body text-center">
+                <h1><i class="fas fa-user-clock"></i> {{ today_attendance|length }}</h1>
+                <h5 class="card-title">الحضور اليوم</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3 shadow">
+            <div class="card-body text-center">
+                <h1><i class="fas fa-user-minus"></i> {{ employees_on_leave }}</h1>
+                <h5 class="card-title">في إجازة</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Documents -->
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-file-alt"></i> الوثائق الحديثة</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_documents %}
+                <div class="list-group">
+                    {% for employee in recent_documents %}
+                        {% for document in employee.documents %}
+                        <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ document.title }}</h6>
+                                <small>{{ document.issue_date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ employee.first_name }} {{ employee.last_name }} - {{ document.document_type }}</p>
+                        </a>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> لا توجد وثائق حديثة
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('documents.document_list') }}" class="btn btn-sm btn-outline-primary">
+                    عرض جميع الوثائق
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Today's Attendance -->
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-user-clock"></i> الحضور اليوم</h5>
+            </div>
+            <div class="card-body">
+                {% if today_attendance %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>الموظف</th>
+                                <th>وقت الحضور</th>
+                                <th>وقت الانصراف</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in today_attendance %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('employees.employee_detail', employee_id=record.employee.id) }}">
+                                        {{ record.employee.first_name }} {{ record.employee.last_name }}
+                                    </a>
+                                </td>
+                                <td>{{ record.check_in.strftime('%H:%M') if record.check_in else '-' }}</td>
+                                <td>{{ record.check_out.strftime('%H:%M') if record.check_out else '-' }}</td>
+                                <td>
+                                    {% if record.status == 'present' %}
+                                    <span class="badge bg-success">حاضر</span>
+                                    {% elif record.status == 'absent' %}
+                                    <span class="badge bg-danger">غائب</span>
+                                    {% elif record.status == 'late' %}
+                                    <span class="badge bg-warning">متأخر</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> لا توجد سجلات حضور لليوم
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
